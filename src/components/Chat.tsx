@@ -40,22 +40,6 @@ const Chat: React.FC = () => {
             <hr className="w-full !bg-black" />
           </div>
           <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
-          <MainChat />
         </div>
       </div>
       <hr />

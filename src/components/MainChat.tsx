@@ -2,15 +2,15 @@ import React from "react";
 import { Avatar } from "@mui/material";
 const MainChat: React.FC = () => {
   return (
-    <div
-      className={`flex gap-3 py-3 ${false && "flex-row-reverse"} flex-row`}
-    >
+    <div className={`flex gap-3 py-3 ${false && "flex-row-reverse"} flex-row`}>
       <Avatar src={""} sx={{ width: 24, height: 24 }} className="self-end" />
       <p
-        className={`rounded-lg rounded-bl-none bg-[#F5F5F5] px-3 py-2 ${
-          false && "bg-sky-500 text-white rounded-bl-lg rounded-br-none"
+        className={`flex flex-col rounded-lg rounded-bl-none bg-[#F5F5F5] px-3 py-2 ${
+          false && "rounded-bl-lg rounded-br-none bg-sky-500 text-white"
         }`}
-      >Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsum officia est deserunt enim, voluptate quia voluptas nemo asperiores doloremque accusamus tempora iusto autem minus, maiores fugit illum? Eligendi, eius in.
+      >
+        <span>Lorem ipsum dolor, sit amet</span>
+        <span className="self-end text-xs">10:56pm</span>
       </p>
     </div>
   );
