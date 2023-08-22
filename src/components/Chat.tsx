@@ -33,7 +33,7 @@ const Chat: React.FC = () => {
             </IconButton>
           </div>
         </div>
-        <div className="h-full  overflow-y-scroll px-6">
+        <div className="h-full  overflow-y-scroll px-6 py-3">
           <div className="flex flex-row items-center justify-center capitalize">
             <hr className="w-full !bg-black" />
             <span className="px-3">today</span>
@@ -44,7 +44,7 @@ const Chat: React.FC = () => {
       </div>
       <hr />
       <div className="p-4">
-        <div className="flex w-full items-center justify-between rounded-xl bg-slate-100 px-2 py-1">
+        <form className="flex w-full items-center justify-between rounded-xl bg-slate-100 px-2 py-1">
           <div className="flex w-full space-x-1">
             <IconButton>
               <Mic />
@@ -68,7 +68,7 @@ const Chat: React.FC = () => {
               <Send />
             </IconButton>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
