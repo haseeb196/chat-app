@@ -12,6 +12,7 @@ import {
   Send,
 } from "@mui/icons-material";
 import MainChat from "./MainChat";
+
 const Chat: React.FC = () => {
   return (
     <div className="flex w-full flex-col justify-between">

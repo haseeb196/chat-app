@@ -42,6 +42,7 @@ const Login = () => {
         src={"/app-logo.png"}
         alt=""
         className="bg-transparent"
+        priority
       />
       <button
         onClick={() => popupCenter("/google-signin", "google-signin")}

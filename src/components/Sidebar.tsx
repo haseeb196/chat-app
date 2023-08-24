@@ -1,29 +1,66 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Avatar, IconButton, Backdrop } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Add } from "@mui/icons-material";
+
 import Users from "./Users";
 import Menus from "./Menus";
 import { useSession } from "next-auth/react";
-const Sidebar: React.FC = () => {
-  const [usertag, setUsertag] = useState<string>("");
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import db from "@/utils/firebase";
+interface props {
+  tag: string;
+}
+const Sidebar: React.FC<props> = ({ tag }) => {
+  const [chats, setChats] = useState<{ id: string }[]>([]);
+  const [finduser, setFinduser] = useState<string>("");
   const [backdrops, setBackdrops] = useState<boolean>(false);
   const Userdata = useSession().data;
-  const findUser = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    void (async () => {
+      const chat = getDocs(collection(doc(db, "users", "haseeb"), "chats"));
+      const chatdoc: React.SetStateAction<{ id: string }[]> = [];
+      (await chat).forEach((doc) => chatdoc.push({ id: doc.id }));
+      setChats(chatdoc);
+    })();
+  }, []);
+
+  const findUsers = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setBackdrops(false);
-  };
-
-  useEffect(() => {
-    if (Userdata !== null) {
-      const user =
-        Userdata?.user?.name?.toLowerCase().replace(/ /g, "") +
-        Math.floor(1000 + Math.random() * 9000).toString();
-
-      setUsertag(user);
+    if (finduser !== "" && finduser !== tag) {
+      const q = query(collection(db, "users"), where("tag", "==", finduser));
+      const userid = (await getDocs(q)).docs[0]?.id;
+      if (userid !== undefined) {
+        setDoc(
+          doc(
+            collection(doc(db, "users", Userdata?.user.name!), "chats"),
+            userid
+          ),
+          {}
+        ).catch((e) => console.log(e));
+        setDoc(
+          doc(
+            collection(doc(db, "users", userid), "chats"),
+            Userdata?.user.name!
+          ),
+          {}
+        ).catch((e) => console.log(e));
+      }
     }
-  }, [Userdata]);
+  };
 
   return (
     <div className="flex w-[350px] flex-col space-y-5 bg-[#F5F5F5] px-4 pt-5">
@@ -34,7 +71,7 @@ const Sidebar: React.FC = () => {
             <p className="text-[19px] font-bold capitalize text-sky-500">
               {Userdata?.user.name}
             </p>
-            <p className="text-sm">@{usertag}</p>
+            <p className="text-sm">{tag}</p>
           </div>
         </div>
         <Menus />
@@ -55,19 +92,22 @@ const Sidebar: React.FC = () => {
         >
           <div className="flex flex-col gap-2 rounded-lg bg-gray-400 px-8 py-6 text-black">
             <span>Enter User Tag:</span>
-            <form onSubmit={(e) => findUser(e)}>
+            <form onSubmit={findUsers}>
               <input
                 type="text"
                 placeholder="@user3525"
                 className="p-1 outline-none"
+                value={finduser}
+                onChange={(e) => setFinduser(e.target.value)}
               />
-              <button type="submit" className="hidden"></button>
-            </form>{" "}
+            </form>
           </div>
         </Backdrop>
       </div>
       <div>
-        <Users />
+        {chats.map((x) => (
+          <Users chatname={x.id} key={x.id} />
+        ))}
       </div>
     </div>
   );
