@@ -29,6 +29,7 @@ export default function Home() {
           setUsertag(user);
           setDoc(doc(db, "users", session.data.user.name as string), {
             tag: user,
+            image: session.data.user.image,
           }).catch((e) => console.log(e));
         }
         setUsertag(datas.data()?.tag as string);

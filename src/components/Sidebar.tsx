@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
@@ -5,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Avatar, IconButton, Backdrop } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactElement } from "react";
 import { Search, Add } from "@mui/icons-material";
 
 import Users from "./Users";
@@ -28,14 +29,7 @@ const Sidebar: React.FC<props> = ({ tag }) => {
   const [finduser, setFinduser] = useState<string>("");
   const [backdrops, setBackdrops] = useState<boolean>(false);
   const Userdata = useSession().data;
-  useEffect(() => {
-    void (async () => {
-      const chat = getDocs(collection(doc(db, "users", "haseeb"), "chats"));
-      const chatdoc: React.SetStateAction<{ id: string }[]> = [];
-      (await chat).forEach((doc) => chatdoc.push({ id: doc.id }));
-      setChats(chatdoc);
-    })();
-  }, []);
+  const userimage = Userdata?.user.image;
 
   const findUsers = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,28 +39,31 @@ const Sidebar: React.FC<props> = ({ tag }) => {
       const userid = (await getDocs(q)).docs[0]?.id;
       if (userid !== undefined) {
         setDoc(
-          doc(
-            collection(doc(db, "users", Userdata?.user.name!), "chats"),
-            userid
-          ),
+          doc(collection(db, "users", Userdata?.user.name!, "chats"), userid),
           {}
         ).catch((e) => console.log(e));
         setDoc(
-          doc(
-            collection(doc(db, "users", userid), "chats"),
-            Userdata?.user.name!
-          ),
+          doc(collection(db, "users", userid, "chats"), Userdata?.user.name!),
           {}
         ).catch((e) => console.log(e));
       }
     }
   };
-
+  useEffect(() => {
+    void (async () => {
+      const chat = getDocs(
+        collection(db, "users", Userdata?.user.name!, "chats")
+      );
+      const chatdoc: React.SetStateAction<{ id: string }[]> = [];
+      (await chat).forEach((doc) => chatdoc.push({ id: doc.id }));
+      setChats(chatdoc);
+    })();
+  }, [Userdata]);
   return (
     <div className="flex w-[350px] flex-col space-y-5 bg-[#F5F5F5] px-4 pt-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Avatar src={""} />
+          {userimage && <Avatar src={userimage} alt="" />}
           <div>
             <p className="text-[19px] font-bold capitalize text-sky-500">
               {Userdata?.user.name}
