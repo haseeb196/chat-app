@@ -7,7 +7,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Avatar, IconButton, Backdrop } from "@mui/material";
 import React, { useState, useEffect, ReactElement } from "react";
-import { Search, Add } from "@mui/icons-material";
+import { Search, Add, Close } from "@mui/icons-material";
 
 import Users from "./Users";
 import Menus from "./Menus";
@@ -31,6 +31,19 @@ const Sidebar: React.FC<props> = ({ tag }) => {
   const Userdata = useSession().data;
   const userimage = Userdata?.user.image;
 
+  useEffect(() => {
+    void (async () => {
+      if (Userdata !== undefined) {
+        const chat = getDocs(
+          collection(db, "users", Userdata?.user.name!, "chats")
+        );
+        const chatdoc: React.SetStateAction<{ id: string }[]> = [];
+        (await chat).forEach((doc) => chatdoc.push({ id: doc.id }));
+        setChats(chatdoc);
+      }
+    })();
+  }, [Userdata]);
+
   const findUsers = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setBackdrops(false);
@@ -49,16 +62,7 @@ const Sidebar: React.FC<props> = ({ tag }) => {
       }
     }
   };
-  useEffect(() => {
-    void (async () => {
-      const chat = getDocs(
-        collection(db, "users", Userdata?.user.name!, "chats")
-      );
-      const chatdoc: React.SetStateAction<{ id: string }[]> = [];
-      (await chat).forEach((doc) => chatdoc.push({ id: doc.id }));
-      setChats(chatdoc);
-    })();
-  }, [Userdata]);
+
   return (
     <div className="flex w-[350px] flex-col space-y-5 bg-[#F5F5F5] px-4 pt-5">
       <div className="flex items-center justify-between">
@@ -73,7 +77,7 @@ const Sidebar: React.FC<props> = ({ tag }) => {
         </div>
         <Menus />
       </div>
-      <div className="flex items-center space-x-2 rounded-xl bg-white px-2 py-2">
+      <div className="flex items-center justify-between space-x-2 rounded-xl bg-white px-2 py-2">
         <Search />
         <input
           type="text"
@@ -87,7 +91,7 @@ const Sidebar: React.FC<props> = ({ tag }) => {
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={backdrops}
         >
-          <div className="flex flex-col gap-2 rounded-lg bg-gray-400 px-8 py-6 text-black">
+          <div className="relative flex flex-col gap-2 rounded-lg bg-gray-400 px-8 py-6 text-black">
             <span>Enter User Tag:</span>
             <form onSubmit={findUsers}>
               <input
@@ -98,6 +102,12 @@ const Sidebar: React.FC<props> = ({ tag }) => {
                 onChange={(e) => setFinduser(e.target.value)}
               />
             </form>
+            <IconButton
+              className="absolute right-0 top-0"
+              onClick={() => setBackdrops(false)}
+            >
+              <Close />
+            </IconButton>
           </div>
         </Backdrop>
       </div>
