@@ -16,11 +16,11 @@ const MainChat: React.FC<eachChatType> = ({
 }) => {
   const session = useSession();
   const formatTimestamp = (timestamp: Timestamp) => {
-    const date = timestamp.toDate();
-    const hours = date.getHours();
+    const date = timestamp?.toDate();
+    const hours = date?.getHours();
     const period = hours >= 12 ? "pm" : "am";
     const formattedHours = hours % 12 || 12;
-    const formattedMinutes = date.getMinutes().toString().padStart(2, "0");
+    const formattedMinutes = date?.getMinutes().toString().padStart(2, "0");
 
     return `${formattedHours}:${formattedMinutes}${period}`;
   };
@@ -41,7 +41,7 @@ const MainChat: React.FC<eachChatType> = ({
             : " rounded-br-none bg-sky-500  text-white"
         }`}
       >
-        <span>{emessage}</span>
+        <span className="self-start">{emessage}</span>
         <span className="self-end text-xs">{formatTimestamp(etimestamp)}</span>
       </p>
     </div>

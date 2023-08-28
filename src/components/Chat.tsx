@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { Avatar, IconButton } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
@@ -14,9 +16,21 @@ import {
 } from "@mui/icons-material";
 import MainChat from "./MainChat";
 import { Mycontext } from "./ChatContext";
-import { type Timestamp, collection, getDocs } from "firebase/firestore";
+import {
+  type Timestamp,
+  collection,
+  getDocs,
+  serverTimestamp,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  type Unsubscribe,
+} from "firebase/firestore";
 import db from "@/utils/firebase";
 import { useSession } from "next-auth/react";
+import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
+
 interface chatType {
   image: string;
   message: string;
@@ -24,34 +38,81 @@ interface chatType {
   timestamp: Timestamp;
 }
 const Chat: React.FC = () => {
+  const [msg, setMsg] = useState<string>("");
   const [chats, setChats] = useState<chatType[]>([]);
+  const [emoji, setEmoji] = useState(false);
   const session = useSession();
   const { chatid, userimage } = useContext(Mycontext);
   useEffect(() => {
     if (chatid !== "") {
-      void (async () => {
-        const chatdsg = collection(
-          db,
-          "users",
-          session.data?.user?.name!,
-          "chats",
-          chatid,
-          "messages"
-        );
-        const chatsdata = getDocs(chatdsg);
-        const chatarray: chatType[] = [];
-        if (chatsdata !== undefined) {
-          (await chatsdata).forEach((doc) => {
-            const thischat = doc.data() as chatType;
+      const chatdsg = collection(
+        db,
+        "users",
+        session.data?.user?.name!,
+        "chats",
+        chatid,
+        "messages"
+      );
+      const queryRef = query(chatdsg, orderBy("timestamp", "asc"));
 
-            chatarray.push(thischat);
-          });
+      const chatsdata = getDocs(queryRef);
+      let Unsubscribe: Unsubscribe;
+      if (chatsdata !== undefined) {
+        Unsubscribe = onSnapshot(queryRef, (querySnapshot) => {
+          const chatarray: chatType[] = [];
+          querySnapshot.forEach((doc) =>
+            chatarray.push(doc.data() as chatType)
+          );
           setChats(chatarray);
-        }
-      })();
+        });
+      }
+      return () => {
+        Unsubscribe();
+      };
     }
   }, [chatid, session]);
 
+  const handleinput = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (msg !== "" && chatid !== "") {
+      //send the msg
+      const messageData = {
+        message: msg,
+        name: session.data?.user.name,
+        image: session.data?.user.image,
+        timestamp: serverTimestamp(),
+      };
+
+      addDoc(
+        collection(
+          db,
+          "users",
+          session.data?.user.name!,
+          "chats",
+          chatid,
+          "messages"
+        ),
+        messageData
+      ).catch((e) => console.log(e));
+      addDoc(
+        collection(
+          db,
+          "users",
+          chatid,
+          "chats",
+          session.data?.user.name!,
+          "messages"
+        ),
+        messageData
+      ).catch((e) => console.log(e));
+    }
+    setMsg("");
+  };
+  const handleEmojiClick = (emojiObject: EmojiClickData, event: MouseEvent) => {
+    event.preventDefault();
+    setMsg((prev) => prev + emojiObject.emoji);
+    setEmoji(!emoji);
+  };
   return (
     chatid !== "" && (
       <div className="flex w-full flex-col justify-between">
@@ -79,14 +140,14 @@ const Chat: React.FC = () => {
               <span className="px-3">today</span>
               <hr className="w-full !bg-black" />
             </div>
-            {chats?.map((x) => {
+            {chats?.map((x, id) => {
               return (
                 <MainChat
                   eimg={x.image}
                   ename={x.name}
                   emessage={x.message}
                   etimestamp={x.timestamp}
-                  key={x.name}
+                  key={id}
                 />
               );
             })}
@@ -94,13 +155,18 @@ const Chat: React.FC = () => {
         </div>
         <hr />
         <div className="p-4">
-          <form className="flex w-full items-center justify-between rounded-xl bg-slate-100 px-2 py-1">
+          <form
+            onSubmit={handleinput}
+            className="flex w-full items-center justify-between rounded-xl bg-slate-100 px-2 py-1"
+          >
             <div className="flex w-full space-x-1">
               <IconButton>
                 <Mic />
               </IconButton>
               <input
                 type="text"
+                value={msg}
+                onChange={(e) => setMsg(e.target.value)}
                 className="flex-1 bg-transparent pr-1 outline-none"
               />
             </div>
@@ -111,10 +177,18 @@ const Chat: React.FC = () => {
               <IconButton>
                 <PhotoCamera />
               </IconButton>
-              <IconButton>
-                <SentimentSatisfiedAltOutlined />
-              </IconButton>
-              <IconButton>
+              <div className="relative">
+                <IconButton onClick={() => setEmoji(!emoji)}>
+                  <SentimentSatisfiedAltOutlined />
+                </IconButton>
+                {emoji && (
+                  <div className="absolute bottom-2 right-0">
+                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                  </div>
+                )}
+              </div>
+
+              <IconButton type="submit">
                 <Send />
               </IconButton>
             </div>
