@@ -11,12 +11,14 @@ import React, { useEffect, type FC, useState, useContext } from "react";
 import { Mycontext } from "./ChatContext";
 interface props {
   chatname: string;
+  search: string;
 }
 interface Userchats {
   message: string;
   image: string;
 }
-const Users: FC<props> = ({ chatname }) => {
+const Users: FC<props> = ({ chatname, search }) => {
+  const [show, setShow] = useState<boolean>(false);
   const [userchat, setUserchat] = useState<Userchats | undefined>();
   const session = useSession();
   const sessionData = session?.data;
@@ -45,24 +47,44 @@ const Users: FC<props> = ({ chatname }) => {
       }
     })();
   }, [chatname, sessionData, setUserimage]);
-
+  useEffect(() => {
+    if (search !== "") {
+      if (search.length > 1) {
+        if (chatname.toLocaleLowerCase().includes(search.toLowerCase())) {
+          setShow(true);
+        } else {
+          setShow(false);
+        }
+      } else {
+        if (chatname.toLowerCase().includes(search.toLowerCase())) {
+          setShow(true);
+        } else {
+          setShow(false);
+        }
+      }
+    } else {
+      setShow(true);
+    }
+  }, [chatname, search]);
   return (
-    <div
-      onClick={() => setChatid(chatname)}
-      className={`${
-        chatid === chatname && "bg-white"
-      } flex justify-between rounded-lg px-3 py-2 hover:bg-white`}
-    >
-      <div className="flex items-center space-x-4">
-        <Avatar src={userchat?.image} />
-        <div>
-          <h2 className="text-[17px] font-semibold capitalize text-sky-700">
-            {chatname}
-          </h2>
-          <p className="line-clamp-1 text-sm">{userchat?.message}</p>
+    show && (
+      <div
+        onClick={() => setChatid(chatname)}
+        className={`${
+          chatid === chatname && "bg-white"
+        } flex justify-between rounded-lg px-3 py-2 hover:bg-white`}
+      >
+        <div className="flex items-center space-x-4">
+          <Avatar src={userchat?.image} />
+          <div>
+            <h2 className="text-[17px] font-semibold capitalize text-sky-700">
+              {chatname}
+            </h2>
+            <p className="line-clamp-1 text-sm">{userchat?.message}</p>
+          </div>
         </div>
       </div>
-    </div>
+    )
   );
 };
 

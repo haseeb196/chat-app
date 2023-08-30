@@ -134,7 +134,7 @@ const Chat: React.FC = () => {
               </IconButton>
             </div>
           </div>
-          <div className="h-full  overflow-y-scroll px-6 py-3">
+          <div className="h-full overflow-y-scroll px-6 py-3">
             <div className="flex flex-row items-center justify-center capitalize">
               <hr className="w-full !bg-black" />
               <span className="px-3">today</span>

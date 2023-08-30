@@ -26,6 +26,7 @@ interface props {
   tag: string;
 }
 const Sidebar: React.FC<props> = ({ tag }) => {
+  const [search, setSearch] = useState<string>("");
   const [chats, setChats] = useState<{ id: string }[]>([]);
   const [finduser, setFinduser] = useState<string>("");
   const [backdrops, setBackdrops] = useState<boolean>(false);
@@ -82,6 +83,8 @@ const Sidebar: React.FC<props> = ({ tag }) => {
         <Search />
         <input
           type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="Search User"
           className="bg-transparent outline-none"
         />
@@ -112,9 +115,9 @@ const Sidebar: React.FC<props> = ({ tag }) => {
           </div>
         </Backdrop>
       </div>
-      <div>
+      <div className="no-scrollbar flex flex-col space-y-4 overflow-y-auto py-3">
         {chats.map((x) => (
-          <Users chatname={x.id} key={x.id} />
+          <Users chatname={x.id} key={x.id} search={search} />
         ))}
       </div>
     </div>
