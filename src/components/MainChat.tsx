@@ -8,6 +8,7 @@ interface eachChatType {
   ename: string;
   etimestamp: Timestamp;
 }
+
 const MainChat: React.FC<eachChatType> = ({
   eimg,
   emessage,

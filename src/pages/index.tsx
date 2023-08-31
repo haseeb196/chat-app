@@ -39,7 +39,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Chat-App</title>
+        <title>Possup</title>
         <meta name="description" content="chat-app" />
         <link rel="icon" href="/app-logo.png" />
       </Head>

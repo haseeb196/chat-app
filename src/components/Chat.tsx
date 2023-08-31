@@ -43,6 +43,7 @@ const Chat: React.FC = () => {
   const [emoji, setEmoji] = useState(false);
   const session = useSession();
   const { chatid, userimage } = useContext(Mycontext);
+
   useEffect(() => {
     if (chatid !== "") {
       const chatdsg = collection(
@@ -134,20 +135,16 @@ const Chat: React.FC = () => {
               </IconButton>
             </div>
           </div>
+
           <div className="h-full overflow-y-scroll px-6 py-3">
-            <div className="flex flex-row items-center justify-center capitalize">
-              <hr className="w-full !bg-black" />
-              <span className="px-3">today</span>
-              <hr className="w-full !bg-black" />
-            </div>
             {chats?.map((x, id) => {
               return (
                 <MainChat
+                  key={id}
                   eimg={x.image}
                   ename={x.name}
                   emessage={x.message}
                   etimestamp={x.timestamp}
-                  key={id}
                 />
               );
             })}

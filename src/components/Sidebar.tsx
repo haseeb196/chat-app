@@ -66,7 +66,7 @@ const Sidebar: React.FC<props> = ({ tag }) => {
   };
 
   return (
-    <div className="flex w-[350px] flex-col space-y-5 bg-[#F5F5F5] px-4 pt-5">
+    <div className="flex w-[309px] flex-col space-y-5 bg-[#F5F5F5] px-4 pt-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {userimage && <Avatar src={userimage} alt="" />}
@@ -80,7 +80,7 @@ const Sidebar: React.FC<props> = ({ tag }) => {
         <Menus />
       </div>
       <div className="flex items-center justify-between space-x-2 rounded-xl bg-white px-2 py-2">
-        <Search />
+        <Search fontSize="medium" />
         <input
           type="text"
           value={search}
