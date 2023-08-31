@@ -1,0 +1,7 @@
+const config = {
+ //Your config here
+};
+
+const app = initializeApp(config);
+const db = getFirestore(app);
+export default db;
