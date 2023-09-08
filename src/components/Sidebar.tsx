@@ -89,9 +89,10 @@ const Sidebar: React.FC<props> = ({ tag }) => {
           className="bg-transparent outline-none"
         />
         <div className="relative -left-9">
-        <IconButton  onClick={() => setBackdrops(true)}>
-          <Add />
-        </IconButton></div>
+          <IconButton onClick={() => setBackdrops(true)}>
+            <Add />
+          </IconButton>
+        </div>
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={backdrops}
