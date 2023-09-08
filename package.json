@@ -7,8 +7,16 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "format": "prettier --check --ignore-path .gitignore .",
-    "format:fix": "prettier --write --ignore-path .gitignore ."
+    "prepare": "husky install",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,css,json,md}": [
+      "prettier --write --ignore-path .gitignore ."
+    ],
+    "*.js": [
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -19,6 +27,7 @@
     "@tanstack/react-query": "^4.29.25",
     "emoji-picker-react": "^4.4.11",
     "firebase": "^10.3.0",
+    "husky": "^8.0.3",
     "next": "^13.4.11",
     "next-auth": "^4.22.4",
     "react": "18.2.0",
@@ -37,6 +46,7 @@
     "autoprefixer": "^10.4.14",
     "eslint": "^8.40.0",
     "eslint-config-next": "^13.4.2",
+    "lint-staged": "^14.0.1",
     "postcss": "^8.4.27",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",

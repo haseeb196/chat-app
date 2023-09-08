@@ -88,9 +88,10 @@ const Sidebar: React.FC<props> = ({ tag }) => {
           placeholder="Search User"
           className="bg-transparent outline-none"
         />
-        <IconButton onClick={() => setBackdrops(true)}>
+        <div className="relative -left-9">
+        <IconButton  onClick={() => setBackdrops(true)}>
           <Add />
-        </IconButton>
+        </IconButton></div>
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={backdrops}
@@ -107,7 +108,7 @@ const Sidebar: React.FC<props> = ({ tag }) => {
               />
             </form>
             <IconButton
-              className="absolute right-0 top-0"
+              className="!absolute !right-0 !top-0"
               onClick={() => setBackdrops(false)}
             >
               <Close />
