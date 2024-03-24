@@ -88,7 +88,7 @@ const Sidebar: React.FC<props> = ({ tag }) => {
           placeholder="Search User"
           className="bg-transparent outline-none"
         />
-        <div className="relative -left-9">
+        <div>
           <IconButton onClick={() => setBackdrops(true)}>
             <Add />
           </IconButton>
